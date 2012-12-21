@@ -1,0 +1,149 @@
+import "TouristRoute.proto";
+
+package damuzhi;
+
+option java_package = "com.damuzhi.travel";
+option java_outer_classname = "AppProtos";
+
+message NameIdPair {
+  required string name = 1;             // 名称
+  required int32  id = 2;               // ID
+  optional string image = 3;            // 对应数据图片的网络URL地址，每次启动时从服务器上下载
+}
+
+enum PlaceCategoryType{
+  PLACE_ALL = 9999;
+  PLACE_SPOT = 1;
+  PLACE_HOTEL = 2;
+  PLACE_RESTRAURANT = 3;
+  PLACE_SHOPPING = 4;
+  PLACE_ENTERTAINMENT = 5;  
+}
+
+message PlaceMeta {       
+ 
+  required PlaceCategoryType categoryId = 1;      // 地点分类ID，如1代表景点
+  required string name = 2;                       // 地点分类显示名字，如景点
+  
+  repeated NameIdPair subCategoryList = 3;        // 地点分类下的所有子分类
+  repeated NameIdPair providedServiceList = 4;    // 地点分类下的可用的所有服务选项列表
+}
+
+message CityArea{                                      // 城市区域，用于筛选条件查询和显示
+  required int32 areaId = 1;
+  required string areaName = 2;
+}
+
+message CityLocationInfo
+{
+   optional string cityName = 1;
+   optional double longitude = 2;
+   optional double latitude = 3; 
+}
+
+message City {
+  required int32 cityId = 1;            // 城市ID
+  required string cityName = 2;         // 城市显示名称，如香港
+  optional string latestVersion = 3;    // 最新城市数据包版本，格式如1.0
+  optional string countryName = 4;
+  optional int32  dataSize = 5;         // 数据包大小
+  optional string downloadURL = 6;      // 数据包下载地址
+    
+  repeated CityArea areaList = 10;                      // 城市区域列表，二级列表
+  
+  required string currencySymbol = 11;                  // 货币显示符号，如人民币为¥，美元为$
+  required string currencyId = 12;                      // 货币ID，用于实时汇率查询，使用国际标准，如人民币为CNY，美元为USD
+  required string currencyName = 13;                    // 货币显示名字，如“人民币”，“美元”，“欧元”
+
+  optional int32 priceRank = 20 [default=3];            // 城市查询价格等级，默认为3
+  
+  optional int32 groupId = 50;                  // 分组Id
+  
+  optional bool hotCity = 51 [default = false];         // 是否是热门城市
+  
+  repeated CityLocationInfo locationInfo = 55;       // 城市定位信息
+}
+
+message CityList {
+  repeated City cities = 1;
+}
+
+message HelpInfo {
+  optional string version = 1;              // 帮助说明的版本
+  optional string helpHtml = 11;            // 帮助说明的HTML文件路径  
+}
+
+message RecommendedApp {
+  required string name = 1;                 // app名字
+  required int32 id = 2;                    // app的id，全局唯一
+  optional string appId = 3;                // appId，给iOS系统用
+  optional string description = 4;          // app描述
+  optional string icon = 5;                 // app图标的网络URL地址，每次启动时从服务器上下载
+  optional string url = 6;                  // app的链接，给安卓系统用
+}
+
+// 旅行社
+message Agency {
+  required int32 agencyId = 1;      // 旅行社id
+  required string name = 2;         // 旅行社名称
+  optional string shortName = 5;    // 旅行社简称
+  optional string url = 6;          // 旅行社介绍网页
+}
+
+// 线路出发/目的城市
+message RouteCity {
+  required int32 routeCityId = 1;		// 线路城市id
+  required string cityName = 2;         // 城市名
+  required string countryName = 3;		// 国家名称
+  optional int32 regionId = 8;          // 区域Id
+}
+
+message Region{
+  required int32 regionId = 1;          // 区域Id
+  required string regionName = 2;       // 区域名称，如"东南亚", "港澳台"等
+}
+
+message CityGroup {
+  required int32 groupId = 1;
+  required string name = 2;
+}
+
+//机票的出发/到达城市
+message AirCity {
+  required int32 cityId = 1;            //城市id
+  required string cityName = 2;         //城市名
+}
+
+// 应用相关的基础数据，和城市无关
+message App {
+  required string dataVersion = 1;                  // 数据的版本，如1.0
+  repeated City cities = 2;                         // 正式启用城市列表
+  repeated City testCities = 3;                     // 测试实用测试列表
+  repeated PlaceMeta placeMetaDataList = 5;         // 每种地点分类的相关数据
+  repeated RecommendedApp recommendedApps = 10;     // 应用推荐
+  
+  repeated Region regions = 15;                     // 区域数据。
+  
+  repeated RouteCity departCities = 20;             // 路线出发城市
+  repeated RouteCity destinationCities  = 21;       // 路线目的城市
+  repeated NameIdPair routeThemes = 25;             // 路线主题
+  repeated NameIdPair routeCategorys = 26;          // 路线分类
+  
+  repeated Agency agencies = 30;                    // 旅行社
+  
+  optional string serviceTelephone = 100;           // 客服电话
+  
+  repeated CityGroup cityGroups = 80;                // 城市分组
+  
+  repeated NameIdPair airlines = 110;               //航空公司
+  repeated NameIdPair nationalitys = 112;           //国籍
+  repeated NameIdPair cards = 113;                  //证件类型
+  repeated NameIdPair banks = 114;                  //银行
+  
+  repeated AirCity airDepartCities = 120;           //机票的出发城市
+  
+
+//  repeated NameIdPair flightClass = 111;            //舱位类型
+
+}
+
